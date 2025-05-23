@@ -1,7 +1,7 @@
 package furhatos.app.newskill.flow.main.personalityTest
 
+import furhatos.app.newskill.data.locale.PersonalityTest
 import furhatos.app.newskill.flow.partials.Base
-import furhatos.app.newskill.model.PersonalityTest
 import furhatos.app.newskill.nlu.PersonalityTestAnswers
 import furhatos.app.newskill.setting.DEBUG_MODE
 import furhatos.flow.kotlin.furhat

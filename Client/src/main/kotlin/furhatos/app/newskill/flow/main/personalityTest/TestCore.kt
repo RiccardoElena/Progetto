@@ -1,11 +1,9 @@
 package furhatos.app.newskill.flow.main.personalityTest
 
+import furhatos.app.newskill.data.locale.PersonalityTest
 import furhatos.app.newskill.flow.partials.Base
-import furhatos.app.newskill.model.PersonalityTest
 import furhatos.app.newskill.model.usecases.ComputePersonalityUseCase
-import furhatos.app.newskill.setting.DEBUG_MODE
 import furhatos.flow.kotlin.State
-import furhatos.flow.kotlin.furhat
 import furhatos.flow.kotlin.state
 
 val TestCore: State =
@@ -23,9 +21,7 @@ val TestCore: State =
                 questionsToAsk.remove(questionNum)
             }
 
-            if (DEBUG_MODE) {
-                furhat.say("Il vettore di personalità a te associato è ${ComputePersonalityUseCase()(responses)}")
-            }
+            goto(TestEnd(ComputePersonalityUseCase()(responses)))
         }
         include(Base)
     }

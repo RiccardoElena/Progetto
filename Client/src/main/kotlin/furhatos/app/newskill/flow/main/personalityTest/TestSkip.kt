@@ -1,6 +1,5 @@
 package furhatos.app.newskill.flow.main.personalityTest
 
-import furhatos.app.newskill.flow.main.Idle
 import furhatos.app.newskill.flow.partials.Base
 import furhatos.app.newskill.model.usecases.ComputePersonalityUseCase
 import furhatos.flow.kotlin.furhat
@@ -10,11 +9,10 @@ val TestSkip =
     state {
         onEntry {
             furhat.say(
-                "Come vuoi. Assumero una personalità media dunque! " +
-                    "Il vettore di personalità a te associato è ${ComputePersonalityUseCase()()}",
+                "Come vuoi. Assumero una personalità media dunque! ",
             )
 
-            goto(Idle)
+            goto(TestEnd(ComputePersonalityUseCase()()))
         }
         include(Base)
     }
