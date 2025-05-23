@@ -1,6 +1,6 @@
 package furhatos.app.newskill.nlu
 
-import furhatos.app.newskill.model.PersonalityTest
+import furhatos.app.newskill.data.locale.PersonalityTest
 import furhatos.nlu.EnumEntity
 import furhatos.util.Language
 
