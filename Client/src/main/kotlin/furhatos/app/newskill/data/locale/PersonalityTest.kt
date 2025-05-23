@@ -1,4 +1,4 @@
-package furhatos.app.newskill.model
+package furhatos.app.newskill.data.locale
 
 object PersonalityTest {
     private val _questions =
