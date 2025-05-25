@@ -17,41 +17,6 @@ import java.net.Socket
 *  */
 
 /**
- * Rappresenta un utente del sistema
- *
- * @property username nome utente univoco
- * @property password password dell'utente
- */
-data class User(
-    val username: String,
-    val password: String,
-)
-
-/**
- * Risultato di un'operazione di autenticazione
- *
- * @property success true se l'operazione è riuscita, false altrimenti
- * @property message messaggio descrittivo del risultato
- */
-data class AuthResult(
-    val success: Boolean,
-    val message: String,
-)
-
-/**
- * Rappresenta un messaggio di chat
- *
- * @property sender nome utente del mittente
- * @property content contenuto del messaggio
- * @property timestamp timestamp di creazione del messaggio in millisecondi
- */
-data class ChatMessage(
-    val sender: String,
-    val content: String,
-    val timestamp: Long = System.currentTimeMillis(),
-)
-
-/**
  * Client socket per la comunicazione con il server di chat
  *
  * Gestisce l'autenticazione degli utenti e lo scambio di messaggi
@@ -72,14 +37,12 @@ class SocketClient(
     private val port: Int,
     var onServerInfo: (String) -> Unit = { println(it) },
     var onDisconnected: () -> Unit = {},
-    var onMessageReceived: (ChatMessage) -> Unit,
+    var onMessageReceived: (String) -> Unit,
 ) {
     private var socket: Socket? = null
     private var writer: PrintWriter? = null
     private var reader: BufferedReader? = null
     private var _isConnected: Boolean = false
-    private var _isAuthenticated: Boolean = false
-    private var _currentUser: User? = null
 
     /**
      * Verifica se il client è connesso al server
@@ -87,20 +50,6 @@ class SocketClient(
      * @return true se la connessione è attiva, false altrimenti
      */
     val isConnected: Boolean get() = _isConnected
-
-    /**
-     * Verifica se l'utente è autenticato
-     *
-     * @return true se l'utente è autenticato, false altrimenti
-     */
-    val isAuthenticated: Boolean get() = _isAuthenticated
-
-    /**
-     * Restituisce l'utente attualmente autenticato
-     *
-     * @return l'oggetto User dell'utente autenticato, null se nessuno è autenticato
-     */
-    val currentUser: User? get() = _currentUser
 
     /**
      * Stabilisce la connessione socket con il server
@@ -122,84 +71,6 @@ class SocketClient(
         }
 
     /**
-     * Autentica un utente esistente sul server
-     *
-     * @param user oggetto User contenente username e password
-     * @return AuthResult contenente l'esito dell'operazione
-     * @throws java.io.IOException se si verificano errori di comunicazione
-     * @see register per registrare un nuovo utente
-     */
-    suspend fun login(user: User): AuthResult {
-        if (!_isConnected) {
-            return AuthResult(false, "Non connesso al server")
-        }
-
-        return withContext(Dispatchers.IO) {
-            try {
-                val loginMessage = "LOGIN:${user.username}:${user.password}"
-                writer?.println(loginMessage)
-
-                val response = reader?.readLine()
-
-                when {
-                    response?.startsWith("LOGIN_SUCCESS") == true -> {
-                        _isAuthenticated = true
-                        _currentUser = user
-                        AuthResult(true, "Login effettuato con successo")
-                    }
-                    response?.startsWith("LOGIN_FAILED") == true -> {
-                        AuthResult(false, "Credenziali non valide")
-                    }
-                    else -> {
-                        AuthResult(false, "Risposta inaspettata dal server")
-                    }
-                }
-            } catch (e: Exception) {
-                AuthResult(false, "Errore durante il login: ${e.message}")
-            }
-        }
-    }
-
-    /**
-     * Registra un nuovo utente sul server
-     *
-     * @param user oggetto User contenente username e password per il nuovo account
-     * @return AuthResult contenente l'esito della registrazione
-     * @throws java.io.IOException se si verificano errori di comunicazione
-     * @see login per autenticare un utente esistente
-     */
-    suspend fun register(user: User): AuthResult {
-        if (!_isConnected) {
-            return AuthResult(false, "Non connesso al server")
-        }
-
-        return withContext(Dispatchers.IO) {
-            try {
-                val registerMessage = "REGISTER:${user.username}:${user.password}"
-                writer?.println(registerMessage)
-
-                val response = reader?.readLine()
-
-                when {
-                    response?.startsWith("REGISTER_SUCCESS") == true -> {
-                        _isAuthenticated = true
-                        _currentUser = user
-                        AuthResult(true, "Registrazione completata con successo")
-                    }
-                    response?.startsWith("REGISTER_FAILED") == true -> {
-                        AuthResult(false, "Username già esistente")
-                    }
-                    else -> {
-                        AuthResult(false, "Risposta inaspettata dal server")
-                    }
-                }
-            } catch (e: Exception) {
-                AuthResult(false, "Errore durante la registrazione: ${e.message}")
-            }
-        }
-    }
-
-    /**
      * Invia un messaggio di chat al server
      *
      * @param content contenuto del messaggio da inviare
@@ -208,7 +79,7 @@ class SocketClient(
      */
 
     suspend fun sendMessage(content: String): Boolean {
-        if (!_isAuthenticated || _currentUser == null) {
+        if (!_isConnected) {
             return false
         }
 
@@ -234,9 +105,9 @@ class SocketClient(
      * @see onServerInfo
      * @see onDisconnected
      */
-    fun startListening() {
+    fun startListening(): String? {
         if (!_isAuthenticated) {
-            return
+            return null
         }
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -245,7 +116,7 @@ class SocketClient(
                     val message = reader?.readLine()
 
                     if (message != null) {
-                        handleServerMessage(message)
+                        return handleServerMessage(message)
                     } else {
                         _isConnected = false
                         onDisconnected()
@@ -264,7 +135,7 @@ class SocketClient(
      *
      * @param message messaggio grezzo ricevuto dal server
      */
-    private fun handleServerMessage(message: String) {
+    private fun handleServerMessage(message: String): String? {
         val parts = message.split(":", limit = 3)
 
         when {

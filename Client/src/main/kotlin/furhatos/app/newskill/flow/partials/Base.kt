@@ -1,5 +1,7 @@
 package furhatos.app.newskill.flow.partials
 
+import furhatos.app.newskill.data.locale.Localization
+import furhatos.app.newskill.flow.utils.changeOutputLanguage
 import furhatos.flow.kotlin.furhat
 import furhatos.flow.kotlin.onResponse
 import furhatos.flow.kotlin.partialState
@@ -10,6 +12,7 @@ val Base =
         include(BaseWOCatchAll)
         onResponse {
             // Catches everything else
-            furhat.ask("Scusa, non ho capito. Puoi ripetere?")
+            changeOutputLanguage(it.language)
+            furhat.ask(Localization.getLocalizedString("not_understood", it.language))
         }
     }

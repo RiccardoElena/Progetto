@@ -20,8 +20,50 @@ data class PersonalityVector(
     )
 
     companion object {
-        private val _median = PersonalityVector(1.0, 2.0, 3.0, 4.0, 5.0)
+        private val _median =
+            PersonalityVector(
+                4.44,
+                5.23,
+                5.4,
+                4.83,
+                5.38,
+            )
 
+        private val _stdDev =
+            PersonalityVector(
+                1.45,
+                1.11,
+                1.32,
+                1.42,
+                1.07,
+            )
+
+        /**
+         * Median values taken from [here](https://gosling.psy.utexas.edu/scales-weve-developed/ten-item-personality-measure-tipi/)
+         *
+         * The median used is the general one reported in the Excel spreadsheet.
+         * More demographically refined medians exists for the same study, but are not implemented yet.
+         * */
         val median get() = _median
+
+        /**
+         * Standard deviation values taken from [here](https://gosling.psy.utexas.edu/scales-weve-developed/ten-item-personality-measure-tipi/)
+         *
+         * The standard deviation used is the general one reported in the Excel spreadsheet.
+         * More demographically refined standard deviations exists for the same study, but are not implemented yet.
+         * Generally speaking the standard deviation used here differs from the more specific ones by an error of ±0.1
+         * */
+        val stdDev get() = _median
+
+        fun symmetricVector(vector: PersonalityVector): PersonalityVector =
+            PersonalityVector(
+                extroversion = 2 * _median.extroversion - vector.extroversion,
+                agreeableness = 2 * _median.agreeableness - vector.agreeableness,
+                conscientiousness = 2 * _median.conscientiousness,
+                emotionalStability = 2 * _median.emotionalStability - vector.emotionalStability,
+                opennessToExperiences = 2 * _median.opennessToExperiences - vector.opennessToExperiences,
+            )
     }
+
+    fun symmetricVector(): PersonalityVector = symmetricVector(this)
 }

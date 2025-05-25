@@ -46,6 +46,7 @@ repositories {
 
 dependencies {
     implementation 'com.furhatrobotics.furhatos:furhat-commons:2.8.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
 }
 
 jar {

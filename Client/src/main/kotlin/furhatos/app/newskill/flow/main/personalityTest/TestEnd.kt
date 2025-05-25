@@ -1,7 +1,7 @@
 package furhatos.app.newskill.flow.main.personalityTest
 
-import furhatos.app.newskill.flow.betterYN
 import furhatos.app.newskill.flow.main.auth.Register
+import furhatos.app.newskill.flow.utils.betterYN
 import furhatos.app.newskill.model.PersonalityVector
 import furhatos.app.newskill.setting.DEBUG_MODE
 import furhatos.flow.kotlin.furhat

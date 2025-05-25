@@ -1,8 +1,8 @@
 package furhatos.app.newskill.flow.main.auth
 
-import furhatos.app.newskill.flow.betterYN
 import furhatos.app.newskill.flow.main.Idle
 import furhatos.app.newskill.flow.main.personalityTest.TestStart
+import furhatos.app.newskill.flow.utils.betterYN
 import furhatos.app.newskill.model.User
 import furhatos.app.newskill.model.usecases.RetrieveUserUseCase
 import furhatos.app.newskill.model.usecases.ValidateUserQuestionUseCase

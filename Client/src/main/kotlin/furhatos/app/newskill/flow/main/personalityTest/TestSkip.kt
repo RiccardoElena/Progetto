@@ -1,5 +1,6 @@
 package furhatos.app.newskill.flow.main.personalityTest
 
+import furhatos.app.newskill.data.locale.Localization
 import furhatos.app.newskill.flow.partials.Base
 import furhatos.app.newskill.model.usecases.ComputePersonalityUseCase
 import furhatos.flow.kotlin.furhat
@@ -9,7 +10,7 @@ val TestSkip =
     state {
         onEntry {
             furhat.say(
-                "Come vuoi. Assumero una personalità media dunque! ",
+                Localization.getLocalizedString("as_you_wish"),
             )
 
             goto(TestEnd(ComputePersonalityUseCase()()))

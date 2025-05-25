@@ -1,5 +1,7 @@
 package furhatos.app.newskill.flow.partials
 
+import furhatos.app.newskill.data.locale.Localization
+import furhatos.app.newskill.flow.utils.changeOutputLanguage
 import furhatos.flow.kotlin.furhat
 import furhatos.flow.kotlin.onNoResponse
 import furhatos.flow.kotlin.onResponse
@@ -15,12 +17,14 @@ val YNAnswer =
     partialState {
 
         onResponse<Maybe> {
-            furhat.say("Va bene, fa con comodo. Ti aspetto")
+            changeOutputLanguage(it.language)
+            furhat.say(Localization.getLocalizedString("take_your_time", it.language))
 
             raise(call(Listening) as Response<*>)
         }
         onResponse(cond = { it.intent !is Yes && it.intent !is No }) {
-            furhat.say("Scusa, non ho capito. Puoi ripetere?")
+            changeOutputLanguage(it.language)
+            furhat.say(Localization.getLocalizedString("not_understood", it.language))
         }
         include(BaseWOCatchAll)
     }
@@ -32,10 +36,11 @@ val Listening =
         }
 
         onResponse {
+            changeOutputLanguage(it.language)
             terminate(it)
         }
 
         onNoResponse {
-            furhat.ask("Hey, ci sei ancora?")
+            furhat.ask(Localization.getLocalizedString("are_you_there"))
         }
     }

@@ -3,27 +3,27 @@ package furhatos.app.newskill.data.locale
 object PersonalityTest {
     private val _questions =
         mapOf(
-            1u to "Estroversa, esuberante",
-            2u to "Polemica, litigiosa",
-            3u to "Affidabile, auto-disciplinata",
-            4u to "Ansiosa, che si agita facilmente",
-            5u to "Aperta alle nuove esperienze, con molti interessi",
-            6u to "Riservata, silenziosa",
-            7u to "Comprensiva, affettuosa",
-            8u to "Disorganizzata, distratta",
-            9u to "Tranquilla, emotivamente stabile",
-            10u to "Tradizionalista, abitudinaria",
+            1u to "question.1",
+            2u to "question.2",
+            3u to "question.3",
+            4u to "question.4",
+            5u to "question.5",
+            6u to "question.6",
+            7u to "question.7",
+            8u to "question.8",
+            9u to "question.9",
+            10u to "question.10",
         )
 
     private val _possibleAnswers =
         mapOf(
-            1u to "Completamente in disaccordo",
-            2u to "Molto in disaccordo",
-            3u to "Un po' in disaccordo",
-            4u to "Né d'accordo né in disaccordo",
-            5u to "Un po' d'accordo",
-            6u to "Molto d'accordo",
-            7u to "Completamente d'accordo",
+            1u to "answer.1",
+            2u to "answer.2",
+            3u to "answer.3",
+            4u to "answer.4",
+            5u to "answer.5",
+            6u to "answer.6",
+            7u to "answer.7",
         )
 
     val possibleAnswers get() = _possibleAnswers
