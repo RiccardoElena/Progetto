@@ -114,9 +114,9 @@ init_server(int port, const char * gemini_api_key)
     }
     
     // Create thread pool for concurrent request processing
-    g_server.pool = thread_pool_create(THREAD_POOL_SIZE);
+    g_server.pool = thread_pool_create(THREAD_POOL_INITIAL_SIZE);
     if (!g_server.pool) {
-        printf("[ERROR] Failed to create thread pool\n");
+        printf("[ERROR] Failed to create enhanced thread pool\n");
         close(g_server.epoll_fd);
         close(g_server.server_fd);
         curl_global_cleanup();
@@ -176,32 +176,33 @@ static
 void run_server(void)
 {
     struct epoll_event events[MAX_EVENTS];
+    time_t last_stats_time = time(NULL);
     
     printf("[INFO] Server started, waiting for connections...\n");
     printf("[INFO] Press Ctrl+C to shutdown gracefully\n");
     
     // Main event loop
     while (g_server.running) {
-        // Wait for events (1 second timeout for responsiveness)
         int nfds = epoll_wait(g_server.epoll_fd, events, MAX_EVENTS, 1000);
         
         if (nfds == -1) {
-            if (errno == EINTR) {
-                // Interrupted by signal, continue
-                continue;
-            }
+            if (errno == EINTR) continue;
             perror("epoll_wait");
             break;
         }
         
-        // Process all available events
         for (int i = 0; i < nfds; ++i) {
             int fd = events[i].data.fd;
-            
             if (fd == g_server.server_fd) {
-                // New client connection
                 accept_new_connection();
             }
+        }
+        
+        // Print statistics every 30 seconds
+        time_t now = time(NULL);
+        if (now - last_stats_time >= 30) {
+            thread_pool_print_stats(g_server.pool);
+            last_stats_time = now;
         }
     }
     
