@@ -12,6 +12,7 @@ import furhatos.app.newskill.model.PersonalityDisplacement
 import furhatos.app.newskill.model.PersonalityVector
 import furhatos.app.newskill.model.utils.helpers.GesturesHelper
 import furhatos.app.newskill.model.utils.helpers.WaitingSentenceHelper
+import furhatos.app.newskill.setting.DEBUG_MODE
 import furhatos.flow.kotlin.DialogHistory
 import furhatos.flow.kotlin.FlowControlRunner
 import furhatos.flow.kotlin.Furhat
@@ -38,6 +39,10 @@ fun Conversation(furhatPersonality: PersonalityVector) =
         val serverResponses = mutableServerResponses.asSharedFlow()
 
         onEntry {
+            val a = Furhat.dialogHistory.clear()
+            if (DEBUG_MODE) {
+                println(a)
+            }
             BackendService.socket.onMessageReceived = { response ->
                 while (!mutableServerResponses.tryEmit(response)) {
                     delay(100) // piccolo backoff per evitare spin-lock
