@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -g
+CFLAGS = -Wall -Wextra -g
 LIBS = -lcurl -ljson-c -lpthread
 TARGET = robot_dialog_server
 SOURCES = main.c network.c protocol.c gemini_ai.c thread_pool.c utils.c
@@ -21,6 +21,6 @@ install-deps:
 	sudo apt-get install -y build-essential libcurl4-openssl-dev libjson-c-dev
 
 run: $(TARGET)
-	./$(TARGET) -k $(GEMINI_API_KEY) -p 8080
+	./$(TARGET) -p 8080
 
 .PHONY: clean debug release install-deps run

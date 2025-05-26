@@ -17,8 +17,8 @@
 #define CLIENT_SOCKET_TIMEOUT_SEC 30 // Max timeout
 
 // ========== AI CONFIGURATION ==========
-#define MAX_AI_RESPONSE_SIZE 1024  // Maximum AI response length
-#define MAX_AI_ROBOT_BEHAVIOR 1024 // TODO: to be deleted
+#define MAX_AI_RESPONSE_SIZE 2048// Maximum AI response length
+#define MAX_AI_ROBOT_BEHAVIOR 2048// TODO: to be deleted
 #define AI_TIMEOUT_SECONDS 15      // Timeout for AI requests
 #define GEMINI_API_URL "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
 

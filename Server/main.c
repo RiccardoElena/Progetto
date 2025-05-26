@@ -129,8 +129,8 @@ init_server(int port, const char * gemini_api_key)
     printf("[INFO] Robot Dialog Server initialized successfully\n");
     printf("[INFO] - Port: %d\n", port);
     printf("[INFO] - Max clients: %d\n", MAX_CLIENTS);
-    printf("[INFO] - Thread pool size: %d\n", THREAD_POOL_SIZE);
-    printf("[INFO] - Supported languages: English, Italian, Spanish, French\n");
+    printf("[INFO] - Thread pool size: %d\n", THREAD_POOL_INITIAL_SIZE);
+    printf("[INFO] - Supported languages: ALL\n");
     printf("[INFO] - AI Provider: Google Gemini\n");
     
     return (0);
@@ -221,13 +221,13 @@ print_usage(const char * program_name)
     printf("A server for robot-human dialogue with personality adaptation\n\n");
     printf("Usage: %s [OPTIONS]\n\n", program_name);
     printf("Required Options:\n");
-    printf("  -k API_KEY        Google Gemini API key (required)\n\n");
+    printf("  Google Gemini API key (required)\n\n");
     printf("Optional Options:\n");
     printf("  -p PORT           Server port (default: %d)\n", DEFAULT_PORT);
     printf("  -h                Show this help message\n\n");
-    printf("Supported Languages: en (English), it (Italian), es (Spanish), fr (French)\n\n");
+    printf("Supported Languages: EVERITHING\n\n");
     printf("Example:\n");
-    printf("  %s -k your_gemini_api_key -p 8080\n\n", program_name);
+    printf("  %s -p 8080\n\n", program_name);
     printf("Client Message Format:\n");
     printf("  Personality: \"extraversion:5.2,agreeableness:4.1,conscientiousness:6.0,emotional_stability:3.8,openness:5.5|en\"\n");
     printf("  User Message: \"Hello, how are you?\"\n");

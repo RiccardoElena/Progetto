@@ -6,6 +6,7 @@
 #include "protocol.h"
 #include "utils.h"
 #include <string.h>
+#include <stdio.h> // TODO: ???
 
 /**
  * @brief Send a message to a client using MESSAGE_TYPE|payload format
