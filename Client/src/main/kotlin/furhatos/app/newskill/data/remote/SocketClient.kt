@@ -129,6 +129,8 @@ class SocketClient(
                 _isConnected = false
                 onDisconnected()
                 disconnect()
+            } finally {
+                disconnect()
             }
         }
     }

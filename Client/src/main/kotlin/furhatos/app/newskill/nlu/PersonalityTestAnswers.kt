@@ -10,8 +10,8 @@ class PersonalityTestAnswers(
     override fun getExamples(lang: Language): List<String> =
         listOf(
             "@answer",
-            "${Localization.getLocalizedString("answer_variant.1", lang)} @answer",
-            "${Localization.getLocalizedString("answer_variant.2", lang)} @answer",
-            "${Localization.getLocalizedString("answer_variant.3", lang)} @answer",
+            "${Localization.statelessGetLocalizedString("answer_variant.1", lang)} @answer",
+            "${Localization.statelessGetLocalizedString("answer_variant.2", lang)} @answer",
+            "${Localization.statelessGetLocalizedString("answer_variant.3", lang)} @answer",
         )
 }

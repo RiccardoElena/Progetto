@@ -29,5 +29,6 @@ object PersonalityTest {
     val possibleAnswers get() = _possibleAnswers
     val questions get() = _questions
 
-    fun textAnswerToNum(answer: String) = _possibleAnswers.entries.firstOrNull { it.value.lowercase() == answer.lowercase() }?.key ?: 0u
+    fun textAnswerToNum(answer: String) =
+        _possibleAnswers.entries.firstOrNull { Localization.getLocalizedString(it.value).lowercase() == answer.lowercase() }?.key ?: 0u
 }

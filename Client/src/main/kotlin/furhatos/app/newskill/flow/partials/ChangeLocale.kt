@@ -6,18 +6,20 @@ import furhatos.app.newskill.nlu.ChangeLanguage
 import furhatos.app.newskill.nlu.Language
 import furhatos.flow.kotlin.furhat
 import furhatos.flow.kotlin.onResponse
-import furhatos.flow.kotlin.state
+import furhatos.flow.kotlin.partialState
 
 val ChangeLocale =
-    state {
+    partialState {
         onResponse<ChangeLanguage> {
             changeOutputLanguage(it.language)
+            println(it.language)
             furhat.say(Localization.getLocalizedString("detected_language_change", it.language))
             reentry()
         }
 
         onResponse<Language> {
             changeOutputLanguage(it.language)
+            println(it.language)
             furhat.say(Localization.getLocalizedString("detected_language_change", it.language))
             reentry()
         }

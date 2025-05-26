@@ -12,7 +12,7 @@ val Greeting: State =
     state {
         // TODO: we need to understand if askYN accept something different than 'Yes' or 'No' (like 'Ok', 'Of course', etc.)
         onEntry {
-            if (betterYN(Localization.getLocalizedString("intro_furhat"))) {
+            if (betterYN("intro_furhat")) {
 //                if (betterYN("Per caso ci conosciamo?")) {
 //                    furhat.say("Cavolo che sbadato, non ricordo proprio. Ricordami chi sei")
 //                    goto(Login)

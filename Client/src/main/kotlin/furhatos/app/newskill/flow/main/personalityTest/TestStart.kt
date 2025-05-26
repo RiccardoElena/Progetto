@@ -12,20 +12,18 @@ import furhatos.flow.kotlin.state
 val TestStart: State =
     state {
         onEntry {
-            if (betterYN(Localization.getLocalizedString("ready_for_questions"))) {
+            if (betterYN("ready_for_questions")) {
                 furhat.say(
-                    "${Localization.getLocalizedString(Localization.getLocalizedString("intro_questions"))} ${
+                    "${Localization.getLocalizedString("intro_questions")} ${
                         PersonalityTest
                             .possibleAnswers.values
-                            .map{ Localization.getLocalizedString(it) }
-                            .reduce { s, t -> "$s$t,\n"}
-                            .replaceLast(",", "")
-                            .replaceLast(","," ${Localization.getLocalizedString("or_word")}")
+                            .joinToString(", ") { Localization.getLocalizedString(it) }
+                            .replaceLast(",", " ${Localization.getLocalizedString("or_word")}")
                     }",
                 )
 
                 if (betterYN("ready_to_start")) {
-                    furhat.say("let_s_start")
+                    furhat.say(Localization.getLocalizedString("let_s_start"))
                     goto(TestCore)
                 }
             }

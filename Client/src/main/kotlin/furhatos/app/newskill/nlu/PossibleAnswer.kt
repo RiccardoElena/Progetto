@@ -10,5 +10,8 @@ class PossibleAnswer : EnumEntity(stemming = true, speechRecPhrases = true) {
         PersonalityTest.possibleAnswers
             .values
             .toList()
-            .map { Localization.getLocalizedString(it, lang) }
+            .map {
+                println("Init: ${lang.code}")
+                Localization.statelessGetLocalizedString(it, lang)
+            }
 }

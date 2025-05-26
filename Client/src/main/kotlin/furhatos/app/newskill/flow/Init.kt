@@ -6,6 +6,7 @@ import furhatos.app.newskill.flow.utils.changeOutputLanguage
 import furhatos.app.newskill.setting.DISTANCE_TO_ENGAGE
 import furhatos.app.newskill.setting.MAX_NUMBER_OF_USERS
 import furhatos.app.newskill.setting.SUPPORTED_LANGUAGES
+import furhatos.autobehavior.setDefaultMicroexpression
 import furhatos.flow.kotlin.State
 import furhatos.flow.kotlin.furhat
 import furhatos.flow.kotlin.state
@@ -17,10 +18,10 @@ val Init: State =
             /** Set our default interaction parameters */
             users.setSimpleEngagementPolicy(DISTANCE_TO_ENGAGE, MAX_NUMBER_OF_USERS)
             furhat.setInputLanguage(*SUPPORTED_LANGUAGES)
+            furhat.setDefaultMicroexpression(blinking = true, facialMovements = true, eyeMovements = true)
             changeOutputLanguage(SUPPORTED_LANGUAGES[0])
         }
         onEntry {
-            /** start interaction */
             when {
                 furhat.isVirtual() -> goto(Greeting) // Convenient to bypass the need for user when running Virtual Furhat
                 users.hasAny() -> {

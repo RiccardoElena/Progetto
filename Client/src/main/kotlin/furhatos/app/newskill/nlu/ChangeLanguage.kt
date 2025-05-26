@@ -7,9 +7,9 @@ import furhatos.util.Language
 class ChangeLanguage : Intent() {
     override fun getExamples(lang: Language): List<String> =
         listOf(
-            Localization.getLocalizedString("language_option.1", lang),
-            Localization.getLocalizedString("language_option.2", lang),
-            Localization.getLocalizedString("language_option.3", lang),
-            Localization.getLocalizedString("language_option.4", lang),
+            Localization.statelessGetLocalizedString("language_option.1", lang),
+            Localization.statelessGetLocalizedString("language_option.2", lang),
+            Localization.statelessGetLocalizedString("language_option.3", lang),
+            Localization.statelessGetLocalizedString("language_option.4", lang),
         )
 }

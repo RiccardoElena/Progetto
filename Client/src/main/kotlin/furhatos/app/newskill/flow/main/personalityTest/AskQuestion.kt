@@ -14,19 +14,24 @@ import furhatos.flow.kotlin.state
 fun AskTestQuestion(question: String) =
     state {
         onEntry {
+            if (DEBUG_MODE) {
+                println(question)
+                println(Localization.lastLanguage)
+                println(Localization.getLocalizedString(question))
+            }
             furhat.ask(Localization.getLocalizedString(question), endSil = 2000, maxSpeech = 30000)
         }
 
         onResponse<PersonalityTestAnswers> {
             changeOutputLanguage(it.language)
             if (DEBUG_MODE) {
-                furhat.say(
-                    "Risposta percepita: ${it.intent.answer}. " + "Risposta registrata: ${PersonalityTest.textAnswerToNum(
-                        "${it.intent.answer}",
-                    )}",
+                println("Perceived: ${it.intent.answer}.")
+                println(
+                    "Registerd: ${
+                        PersonalityTest.textAnswerToNum(it.intent.answer.toString())}",
                 )
             }
-            terminate(PersonalityTest.textAnswerToNum(it.text))
+            terminate(PersonalityTest.textAnswerToNum(it.intent.answer.toString()))
         }
         include(Base)
     }

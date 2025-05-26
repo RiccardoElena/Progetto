@@ -22,9 +22,10 @@ val YNAnswer =
 
             raise(call(Listening) as Response<*>)
         }
+        include(ChangeLocale)
         onResponse(cond = { it.intent !is Yes && it.intent !is No }) {
             changeOutputLanguage(it.language)
-            furhat.say(Localization.getLocalizedString("not_understood", it.language))
+            furhat.ask(Localization.getLocalizedString("not_understood", it.language))
         }
         include(BaseWOCatchAll)
     }

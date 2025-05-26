@@ -8,4 +8,4 @@ const val DISTANCE_TO_ENGAGE = 1.0 // Min distance for people to be recognised a
 
 const val DEBUG_MODE = true
 
-val SUPPORTED_LANGUAGES = arrayOf(Language.ITALIAN_CH, Language.ENGLISH_GB, Language.SPANISH_ES, Language.FRENCH_CH)
+val SUPPORTED_LANGUAGES = arrayOf(Language.ITALIAN, Language.ENGLISH_GB, Language.SPANISH_ES, Language.FRENCH)

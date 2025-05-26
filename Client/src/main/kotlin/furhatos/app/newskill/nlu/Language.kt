@@ -10,8 +10,8 @@ class Language(
     override fun getExamples(lang: Language): List<String> =
         listOf(
             "@language",
-            "${Localization.getLocalizedString("answer_variant.1", lang)} @language",
-            "${Localization.getLocalizedString("answer_variant.2", lang)} @language",
-            "${Localization.getLocalizedString("answer_variant.3", lang)} @language",
+            "${Localization.statelessGetLocalizedString("answer_variant.1", lang)} @language",
+            "${Localization.statelessGetLocalizedString("answer_variant.2", lang)} @language",
+            "${Localization.statelessGetLocalizedString("answer_variant.3", lang)} @language",
         )
 }

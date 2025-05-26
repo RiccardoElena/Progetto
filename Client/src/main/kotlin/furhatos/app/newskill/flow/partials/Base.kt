@@ -8,7 +8,7 @@ import furhatos.flow.kotlin.partialState
 
 val Base =
     partialState {
-
+        include(ChangeLocale)
         include(BaseWOCatchAll)
         onResponse {
             // Catches everything else
