@@ -68,17 +68,12 @@ generate_gemini_request_json(
     char *json_output,
     size_t output_size)
 {
+  // TODO: Remove robot behavior handling from parser
   // Create the premise with language and personality vector
   char premise[1024];
   snprintf(premise, sizeof(premise),
            "You are a robot assistant (Furhat robot) designed to adapt to human personality. "
-           "Respond in %s language. Here is the user's personality profile: %s\\n\\n"
-
-           "RESPONSE FORMAT:\\n"
-           "Provide your response followed by robot behavioral cues in square brackets "
-           "and separate the response and the robot behaviour using a pipe (|) "
-           "(Important do not put newlines in the response).\\n"
-           "Example: 'That sounds interesting! | [enthusiastic voice, maintains eye contact]'\\n\\n"
+           "Respond in %s language. Here is your personality profile: %s\\n\\n"
 
            "Keep responses concise (1-3 sentences) and naturally conversational.",
            language, personality);
@@ -125,42 +120,42 @@ generate_gemini_request_json(
 
   // Build the complete JSON request and keeping the length
   int json_len = snprintf(json_output, output_size,
-                          "{\n"
-                          "  \"generationConfig\": {\n"
-                          "    \"temperature\": 0.9,\n"
-                          "    \"maxOutputTokens\": 800,\n"
-                          "    \"topP\": 1,\n"
-                          "    \"topK\": 1\n"
-                          "  },\n"
-                          "  \"safetySettings\": [\n"
-                          "    {\n"
-                          "      \"category\": \"HARM_CATEGORY_HARASSMENT\",\n"
-                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n"
-                          "    },\n"
-                          "    {\n"
-                          "      \"category\": \"HARM_CATEGORY_HATE_SPEECH\",\n"
-                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n"
-                          "    },\n"
-                          "    {\n"
-                          "      \"category\": \"HARM_CATEGORY_SEXUALLY_EXPLICIT\",\n"
-                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n"
-                          "    },\n"
-                          "    {\n"
-                          "      \"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\",\n"
-                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n"
-                          "    }\n"
-                          "  ],\n"
-                          "  \"contents\": [\n"
-                          "    {\n"
-                          "      \"role\": \"user\",\n"
-                          "      \"parts\": [\n"
-                          "        {\n"
-                          "          \"text\": \"%s\"\n"
-                          "        }\n"
-                          "      ]\n"
-                          "    },\n"
-                          "    %s\n"
-                          "  ]\n"
+                          "{"
+                          "  \"generationConfig\": {"
+                          "    \"temperature\": 0.9,"
+                          "    \"maxOutputTokens\": 800,"
+                          "    \"topP\": 1,"
+                          "    \"topK\": 1"
+                          "  },"
+                          "  \"safetySettings\": ["
+                          "    {"
+                          "      \"category\": \"HARM_CATEGORY_HARASSMENT\","
+                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\""
+                          "    },"
+                          "    {"
+                          "      \"category\": \"HARM_CATEGORY_HATE_SPEECH\","
+                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\""
+                          "    },"
+                          "    {"
+                          "      \"category\": \"HARM_CATEGORY_SEXUALLY_EXPLICIT\","
+                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\""
+                          "    },"
+                          "    {"
+                          "      \"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\","
+                          "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\""
+                          "    }"
+                          "  ],"
+                          "  \"contents\": ["
+                          "    {"
+                          "      \"role\": \"user\","
+                          "      \"parts\": ["
+                          "        {"
+                          "          \"text\": \"%s\""
+                          "        }"
+                          "      ]"
+                          "    },"
+                          "    %s"
+                          "  ]"
                           "}",
                           escaped_premise, conversation);
 

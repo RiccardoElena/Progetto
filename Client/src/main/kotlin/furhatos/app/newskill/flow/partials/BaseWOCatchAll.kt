@@ -11,6 +11,12 @@ import furhatos.flow.kotlin.partialState
 import furhatos.flow.kotlin.users
 import furhatos.gestures.Gestures
 
+/*
+ Add a onResponse<Napoli> handler for "4th Scudetto" celebrations
+ This should include some file in /nlu such as a new EnumEntity and a new Intent
+*/
+
+
 val BaseWOCatchAll =
     partialState {
 

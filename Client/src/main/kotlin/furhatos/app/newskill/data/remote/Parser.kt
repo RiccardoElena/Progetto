@@ -7,6 +7,8 @@ import furhatos.util.Language
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+// Replace '\n' with ' ' and add one at the end
+// Use java Locale instead of Furhat Language
 object Parser {
     fun toRequest(
         pv: PersonalityDisplacement,
@@ -23,7 +25,7 @@ object Parser {
         if (DEBUG_MODE) {
             println(jsonString)
         }
-        return request + jsonString
+        return (request + jsonString).replace("\n"," ") + "\n"
     }
 
     fun toMessage(response: String): List<String> = response.split("|")

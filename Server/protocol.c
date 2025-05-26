@@ -76,13 +76,15 @@ int send_message(int client_fd, int msg_type, const char *data)
 static int
 receive_line(int client_fd, char *buffer, size_t buffer_size)
 {
+  printf("BOMBA2");
+  printf("\n\n\n\n");
   size_t pos = 0;
   char ch;
 
   while (pos < buffer_size - 1)
   {
     ssize_t received = recv(client_fd, &ch, 1, 0);
-
+    printf("%c", ch);
     if (received <= 0)
     {
       if (received == 0)
@@ -96,8 +98,12 @@ receive_line(int client_fd, char *buffer, size_t buffer_size)
       return (-1);
     }
 
+    if (ch == '\n')
+    {
+      break;
+    }
     // Skip carriage return (handle Windows line endings)
-    if (ch == '\r' || ch == '\n')
+    if (ch == '\r')
     {
       continue;
     }
@@ -122,12 +128,16 @@ receive_line(int client_fd, char *buffer, size_t buffer_size)
  */
 int receive_message(int client_fd, message_t *msg)
 {
+  printf("BOMBA");
   char line_buffer[MAX_MESSAGE_SIZE + 64]; // Extra space for message type and separators
   // Initialize message structure
   memset(msg, 0, sizeof(message_t));
 
   // Step 1: Receive complete line from socket
   int line_length = receive_line(client_fd, line_buffer, sizeof(line_buffer));
+  printf("line length %d", line_length);
+  printf("line %s", line_buffer);
+  printf("\n\n\n\n");
   if (line_length < 0)
   {
     return (-1);

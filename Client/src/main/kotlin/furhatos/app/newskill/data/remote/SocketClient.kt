@@ -135,6 +135,7 @@ class SocketClient(
         }
     }
 
+// TODO: update using number from config.h
     /**
      * Gestisce i messaggi ricevuti dal server e invoca le callback appropriate
      *

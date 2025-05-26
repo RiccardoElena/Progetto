@@ -20,7 +20,7 @@
 #define MAX_AI_RESPONSE_SIZE 2048// Maximum AI response length
 #define MAX_AI_ROBOT_BEHAVIOR 2048// TODO: to be deleted
 #define AI_TIMEOUT_SECONDS 15      // Timeout for AI requests
-#define GEMINI_API_URL "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+#define GEMINI_API_URL "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
 // ========== THREAD POOL CONFIGURATION ==========
 #define THREAD_POOL_MIN_SIZE 4               // Minimum threads
