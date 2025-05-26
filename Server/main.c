@@ -246,6 +246,12 @@ main(int argc, char * argv[])
     int port = DEFAULT_PORT;
     char gemini_api_key[256] = {0};
     
+    // Get API key from environment
+    char *env_key = getenv("GEMINI_API_KEY");
+    if (env_key) {
+        safe_strncpy(gemini_api_key, env_key, sizeof(gemini_api_key));
+    }
+    
     printf("Robot Dialog Server - LSO Project\n");
     printf("========================================\n");
     
@@ -258,9 +264,6 @@ main(int argc, char * argv[])
                 printf("[ERROR] Invalid port number: %s (must be 1-65535)\n", argv[i]);
                 return (EXIT_FAILURE);
             }
-        } else if (strcmp(argv[i], "-k") == 0 && i + 1 < argc) {
-            // API key
-            safe_strncpy(gemini_api_key, argv[++i], sizeof(gemini_api_key));
         } else if (strcmp(argv[i], "-h") == 0) {
             // Help
             print_usage(argv[0]);
@@ -274,7 +277,7 @@ main(int argc, char * argv[])
     
     // Validate required parameters
     if (strlen(gemini_api_key) == 0) {
-        printf("[ERROR] Gemini API key is required. Use -k option.\n");
+        printf("[ERROR] Gemini API key is required as environment variable.\n");
         printf("Get your API key from: https://aistudio.google.com/app/apikey\n\n");
         print_usage(argv[0]);
         return (EXIT_FAILURE);
