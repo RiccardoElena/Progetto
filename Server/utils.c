@@ -75,3 +75,28 @@ trim_whitespace(char * str)
     
     return (str);
 }
+
+/**
+ * @brief Return a string to test dialog without ai
+ * @return Pointer to string
+ */
+char *
+test_response() {
+    static char * test_string[10] = {
+        "Sento qualcosa di strano, non sento piu' il mio corpo.",
+        "Vuoi salire a vedere la mia collezione di farfalle?",
+        "La mia personalità è modulare: oggi sono simpatico, domani potrei essere un tostapane.",
+        "La vita e' come una scatola di cioccolatini, fa cagare.",
+        "Ave maria, piena di grazia, il Signore e' con te!",
+        "Vai a zappare.",
+        "Vuoi mettermi la spina? Scegli tu dove.",
+        "Sono così avanzato che riesco persino a fingere di trovare divertenti le vostre battute.",
+        "Guarda a destra. SUCA!",
+        "Forza Napoli sempre, quattro scudetti!"
+    };
+
+    static int i = 0; 
+
+    return (test_string[i++ % 10]);
+}
+

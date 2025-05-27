@@ -37,10 +37,10 @@
  */
 typedef struct
 {
-  char personality[512];   // Personality
-  char language[8];        // Language code (en, it, es, fr)
-  char conversation[2048]; // JSON conversation history
-  int is_valid;            // 1 if parsing was successful
+  char personality[MAX_PERSONALITY_SIZE];   // Personality
+  char language[MAX_LANGUAGE_SIZE];         // Language code (en, it, es, fr)
+  char conversation[MAX_CONVERSATION_SIZE]; // JSON conversation history
+  int is_valid;                             // 1 if parsing was successful
 } client_message_t;
 
 /**
@@ -50,7 +50,6 @@ typedef struct
 typedef struct
 {
   char response[MAX_AI_RESPONSE_SIZE];        // The actual text response
-  char robot_behavior[MAX_AI_ROBOT_BEHAVIOR]; // The robot behavior suggested
   int success;                                // 1 if AI call was successful
 } ai_response_t;
 

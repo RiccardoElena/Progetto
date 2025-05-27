@@ -37,14 +37,16 @@ process_single_request_and_close(int client_fd)
   {
     printf("[WARNING] Failed to set send timeout for fd %d\n", client_fd);
   }
+
+/*
   // Send welcome message
   if (send_message(client_fd, MSG_RESPONSE, "Connected - Send your request") < 0)
   {
     printf("[WARNING] Failed to send welcome message to fd %d\n", client_fd);
     close(client_fd);
     return;
-  }
-
+  } // TODO: we do not need anymore
+*/
   // Receive exactly one message
   message_t msg;
   if (receive_message(client_fd, &msg) < 0)
@@ -59,7 +61,7 @@ process_single_request_and_close(int client_fd)
   // Process the message based on type
   switch (msg.type)
   {
-  case MSG_REQUEST:
+  case MSG_AI_DIALOG_REQUEST:
   {
     printf("[INFO] Processing MSG_REQUEST from fd %d\n", client_fd);
 
@@ -98,32 +100,36 @@ process_single_request_and_close(int client_fd)
     if (ai_result == 0 && ai_response.success)
     {
       // Send response with behavioral cues
-      char response_with_behavior[MAX_AI_RESPONSE_SIZE + 256];
-      snprintf(response_with_behavior, sizeof(response_with_behavior),
-               "%s | [Robot behavior: %s]",
-               ai_response.response, ai_response.robot_behavior);
+      char response_ai[MAX_AI_RESPONSE_SIZE];
+      snprintf(response_ai, sizeof(response_ai), "%s", ai_response.response);
 
-      if (send_message(client_fd, MSG_RESPONSE, response_with_behavior) == 0)
+      if (send_message(client_fd, MSG_AI_DIALOG_RESPONSE, response_ai) == 0)
       {
-        printf("[INFO] Successfully processed request for fd %d\n", client_fd);
+        printf("[INFO] Successfully processed ai request for fd %d\n", client_fd);
       }
       else
       {
         printf("[WARNING] Failed to send response to fd %d\n", client_fd);
       }
+      break; // to make continue in test case
     }
     else
     {
       printf("[ERROR] AI response failed for fd %d\n", client_fd);
-      send_message(client_fd, MSG_ERROR, "Failed to generate AI response");
+      //send_message(client_fd, MSG_ERROR, "Failed to generate AI response");
     }
-    break;
   }
 
-  case MSG_DISCONNECT:
+  case MSG_TEST_DIALOG_REQUEST:
   {
-    printf("[INFO] Processing MSG_DISCONNECT from fd %d\n", client_fd);
-    send_message(client_fd, MSG_DISCONNECT, "Goodbye!");
+    if (send_message(client_fd, MSG_TEST_DIALOG_RESPONSE, test_response()) == 0)
+    {
+      printf("[INFO] Successfully processed test request for fd %d\n", client_fd);
+    }
+    else
+    {
+      printf("[WARNING] Failed to send response to fd %d\n", client_fd);
+    }
     break;
   }
 

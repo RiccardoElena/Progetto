@@ -262,38 +262,11 @@ call_gemini_api(
                 {
                   const char *ai_text = json_object_get_string(text);
 
-                  // Parse the response format: "response | behavior"
-                  char *pipe_pos = strchr(ai_text, '|');
-                  if (pipe_pos)
-                  {
-                    // Extract response part (before pipe)
-                    size_t response_len = pipe_pos - ai_text;
-                    if (response_len < sizeof(response->response))
-                    {
-                      strncpy(response->response, ai_text, response_len);
-                      response->response[response_len] = '\0';
-                      // Trim whitespace from response
-                      trim_whitespace(response->response);
-                    }
-
-                    // Extract behavior part (after pipe)
-                    char *behavior_part = pipe_pos + 1;
-                    safe_strncpy(response->robot_behavior,
-                                 trim_whitespace(behavior_part),
-                                 sizeof(response->robot_behavior));
-                  }
-                  else
-                  {
-                    // If no pipe found, use entire response and default behavior
-                    safe_strncpy(response->response, ai_text, sizeof(response->response));
-                    strcpy(response->robot_behavior, "neutral expression");
-                    printf("[WARNING] AI response missing pipe separator, using default behavior\n");
-                  }
+                  safe_strncpy(response->response, ai_text, sizeof(response->response));
 
                   response->success = 1;
                   printf("[INFO] Gemini response processed successfully\n");
                   printf("[INFO] Response: '%s'\n", response->response);
-                  printf("[INFO] Behavior: '%s'\n", response->robot_behavior);
                 }
               }
             }
