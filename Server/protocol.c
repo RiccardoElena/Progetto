@@ -6,7 +6,6 @@
 #include "protocol.h"
 #include "utils.h"
 #include <string.h>
-#include <stdio.h> // TODO: ???
 
 /**
  * @brief Send a message to a client using MESSAGE_TYPE|payload format
@@ -32,9 +31,10 @@ int send_message(int client_fd, int msg_type, const char *data)
 
   size_t message_len = strlen(message_buffer);
   ssize_t total_sent = 0;
-
+#if SHOW_DEBUG
   printf("[DEBUG] Sending message: '%.*s' to client fd %d\n",
          (int)(message_len - 1), message_buffer, client_fd); // -1 to skip \n in log
+#endif
 
   // Send the complete message
   while (total_sent < (ssize_t)message_len)
@@ -46,8 +46,10 @@ int send_message(int client_fd, int msg_type, const char *data)
     {
       if (sent == 0 || (errno != EAGAIN && errno != EWOULDBLOCK))
       {
+#if SHOW_WARNING
         printf("[WARNING] Failed to send message to client fd %d: %s\n",
                client_fd, strerror(errno));
+#endif
         return (-1);
       }
       // For EAGAIN/EWOULDBLOCK, continue trying
@@ -56,9 +58,10 @@ int send_message(int client_fd, int msg_type, const char *data)
 
     total_sent += sent;
   }
-
+#if SHOW_DEBUG
   printf("[DEBUG] Successfully sent message type %d (%zu bytes) to client fd %d\n",
          msg_type, message_len, client_fd);
+#endif
   return (0);
 }
 
@@ -76,25 +79,27 @@ int send_message(int client_fd, int msg_type, const char *data)
 static int
 receive_line(int client_fd, char *buffer, size_t buffer_size)
 {
-  printf("BOMBA2");
-  printf("\n\n\n\n");
   size_t pos = 0;
   char ch;
 
   while (pos < buffer_size - 1)
   {
     ssize_t received = recv(client_fd, &ch, 1, 0);
-    printf("%c", ch);
+
     if (received <= 0)
     {
       if (received == 0)
       {
+#if SHOW_INFO
         printf("[INFO] Client fd %d disconnected while reading line\n", client_fd);
+#endif
         return (-1);
       }
 
+#if SHOW_WARNING
       printf("[WARNING] Error receiving from client fd %d: %s\n",
              client_fd, strerror(errno));
+#endif
       return (-1);
     }
 
@@ -115,7 +120,9 @@ receive_line(int client_fd, char *buffer, size_t buffer_size)
   // Null-terminate the string
   buffer[pos] = '\0';
 
+#if SHOW_DEBUG
   printf("[DEBUG] Received line (%zu bytes): '%s'\n", pos, buffer);
+#endif
   return ((int)pos);
 }
 
@@ -128,7 +135,6 @@ receive_line(int client_fd, char *buffer, size_t buffer_size)
  */
 int receive_message(int client_fd, message_t *msg)
 {
-  printf("BOMBA");
   char line_buffer[MAX_MESSAGE_SIZE + 64]; // Extra space for message type and separators
   // Initialize message structure
   memset(msg, 0, sizeof(message_t));
@@ -146,8 +152,10 @@ int receive_message(int client_fd, message_t *msg)
   // Step 2: Validate minimum message format
   if (line_length < 2)
   {
+#if SHOW_WARNING
     printf("[WARNING] Received too short message from client fd %d: '%s'\n",
            client_fd, line_buffer);
+#endif
     return (-1);
   }
 
@@ -155,8 +163,10 @@ int receive_message(int client_fd, message_t *msg)
   char *pipe_pos = strchr(line_buffer, '|');
   if (!pipe_pos)
   {
+#if SHOW_WARNING
     printf("[WARNING] Invalid message format from client fd %d (missing '|'): '%s'\n",
            client_fd, line_buffer);
+#endif
     return (-1);
   }
 
@@ -172,8 +182,10 @@ int receive_message(int client_fd, message_t *msg)
   // Validate message type
   if (*endptr != '\0' || parsed_type < 0 || parsed_type > 1000)
   {
+#if SHOW_WARNING
     printf("[WARNING] Invalid message type from client fd %d: '%s'\n",
            client_fd, type_str);
+#endif
     return (-1);
   }
 
@@ -184,8 +196,10 @@ int receive_message(int client_fd, message_t *msg)
   size_t payload_len = strlen(payload_str);
   if (payload_len > MAX_MESSAGE_SIZE - 1)
   {
+#if SHOW_WARNING
     printf("[WARNING] Payload too large from client fd %d (%zu bytes), truncating to %d\n",
            client_fd, payload_len, MAX_MESSAGE_SIZE - 1);
+#endif
     payload_len = MAX_MESSAGE_SIZE - 1;
   }
 
@@ -196,10 +210,12 @@ int receive_message(int client_fd, message_t *msg)
   }
   msg->data[payload_len] = '\0'; // Ensure null termination
 
+#if SHOW_DEBUG
   printf("[DEBUG] Successfully received message from client fd %d: type=%d, length=%d\n",
          client_fd, msg->type, msg->length);
   printf("[DEBUG] Message payload: '%.100s%s'\n",
          msg->data, (payload_len > 100) ? "..." : "");
+#endif
 
   return (0);
 }
@@ -211,18 +227,21 @@ int receive_message(int client_fd, message_t *msg)
  * @param parsed_msg Output structure with parsed components
  * @return 0 on success, -1 on error
  */
-int parse_client_message(const char *data, client_message_t *parsed_msg)
+int parse_client_dialog_message(const char *data, client_message_t *parsed_msg)
 {
+#if SHOW_DEBUG
   printf("[DEBUG] Parsing stateless client message payload: %.100s%s\n",
          data, (strlen(data) > 100) ? "..." : "");
-
+#endif
   // Initialize structure
   memset(parsed_msg, 0, sizeof(client_message_t));
 
   // Check for empty data
   if (!data || strlen(data) == 0)
   {
+#if SHOW_ERROR
     printf("[ERROR] Empty message payload\n");
+#endif
     return (-1);
   }
 
@@ -230,7 +249,9 @@ int parse_client_message(const char *data, client_message_t *parsed_msg)
   char *data_copy = strdup(data);
   if (!data_copy)
   {
+#if SHOW_ERROR
     printf("[ERROR] Failed to allocate memory for message parsing\n");
+#endif
     return (-1);
   }
 
@@ -249,9 +270,11 @@ int parse_client_message(const char *data, client_message_t *parsed_msg)
   // Validate we got all required parts
   if (part_count != 3)
   {
+#if SHOW_ERROR
     printf("[ERROR] Invalid stateless message format: expected 3 parts, got %d\n", part_count);
     printf("[ERROR] Expected format: personality|language|conversation\n");
     printf("[ERROR] Example: 'extraversion:5.2,agreeableness:4.1|en|[xxx]Hello robot'\n");
+#endif
     free(data_copy);
     return (-1);
   }
@@ -266,12 +289,13 @@ int parse_client_message(const char *data, client_message_t *parsed_msg)
 
   free(data_copy);
 
+#if SHOW_INFO
   printf("[INFO] Successfully parsed stateless message:\n");
   printf("[INFO] - Language: %s\n", parsed_msg->language);
   printf("[INFO] - Personality: %.50s%s\n",
          parsed_msg->personality, (strlen(parsed_msg->personality) > 50) ? "..." : "");
   printf("[INFO] - Conversation: %.50s%s\n",
          parsed_msg->conversation, (strlen(parsed_msg->conversation) > 50) ? "..." : "");
-
+#endif
   return (0);
 }

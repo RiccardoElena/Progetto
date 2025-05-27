@@ -52,6 +52,7 @@ class RobotDialogTester:
         return json.dumps(conversation)
     
     def single_request(self, client_id):
+        print("Inside")
         """Esegue una singola richiesta al server"""
         start_time = time.time()
         result = {
@@ -68,16 +69,16 @@ class RobotDialogTester:
             sock.settimeout(30)
             sock.connect((self.host, self.port))
             
-            # Ricevi welcome message
-            welcome = sock.recv(1024).decode().strip()
-            print(f"[Client {client_id}] Welcome: {welcome[:50]}...")
+            # # Ricevi welcome message
+            # welcome = sock.recv(1024).decode().strip()
+            # print(f"[Client {client_id}] Welcome: {welcome[:50]}...")
             
             # Genera richiesta
             personality = self.generate_personality()
             language = random.choice(['en', 'it', 'es', 'fr'])
             conversation = self.generate_conversation()
             
-            request = f"1|extraversion:{personality}|{language}|{conversation}\n"
+            request = f"2|extraversion:{personality}|{language}|{conversation}\n"
             print(request)
             # Invia richiesta
             sock.send(request.encode())

@@ -2,7 +2,6 @@
 #define NETWORK_H
 
 #include "server.h"
-#include "utils.h"
 
 // Network function declarations
 void remove_client(int fd);

@@ -7,7 +7,6 @@
 #define SERVER_H
 
 // Standard C libraries
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -49,8 +48,8 @@ typedef struct
  */
 typedef struct
 {
-  char response[MAX_AI_RESPONSE_SIZE];        // The actual text response
-  int success;                                // 1 if AI call was successful
+  char response[MAX_AI_RESPONSE_SIZE]; // The actual text response
+  int success;                         // 1 if AI call was successful
 } ai_response_t;
 
 /**
