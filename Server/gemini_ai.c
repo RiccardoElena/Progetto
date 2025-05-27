@@ -68,7 +68,6 @@ generate_gemini_request_json(
     char *json_output,
     size_t output_size)
 {
-  // TODO: Remove robot behavior handling from parser
   // Create the premise with language and personality vector
   char premise[1024];
   snprintf(premise, sizeof(premise),
@@ -191,7 +190,8 @@ call_gemini_api(
 {
   CURL *curl;
   CURLcode res;
-  curl_response_t api_response = {0}; // Initialize response buffer
+  curl_response_t api_response = {0}; 
+  long http_code = 0;  // Add HTTP status code checking
 
   printf("[DEBUG] Calling Gemini AI API\n");
 
@@ -232,9 +232,84 @@ call_gemini_api(
 
   // Make the HTTP request
   res = curl_easy_perform(curl);
+  
+  // Get HTTP status code
+  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
 
-  // Parse response if successful
-  if (res == CURLE_OK && api_response.memory)
+  // Check for network/cURL errors first
+  if (res != CURLE_OK)
+  {
+    printf("[ERROR] Gemini API request failed: %s\n", curl_easy_strerror(res));
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+    if (api_response.memory) free(api_response.memory);
+    return (-1);
+  }
+
+  // Check HTTP status code
+  if (http_code != 200)
+  {
+    printf("[ERROR] Gemini API returned HTTP %ld\n", http_code);
+    
+    if (api_response.memory)
+    {
+      printf("[DEBUG] Error response: %s\n", api_response.memory);
+      
+      // Try to parse error details from response
+      json_object *error_root = json_tokener_parse(api_response.memory);
+      if (error_root)
+      {
+        json_object *error_obj;
+        if (json_object_object_get_ex(error_root, "error", &error_obj))
+        {
+          json_object *message_obj;
+          if (json_object_object_get_ex(error_obj, "message", &message_obj))
+          {
+            const char *error_msg = json_object_get_string(message_obj);
+            printf("[ERROR] API Error: %s\n", error_msg);
+            
+            // Provide specific error message to user
+            if (http_code == 403)
+            {
+              safe_strncpy(response->response, 
+                          "API quota exceeded. Please check your billing settings.", 
+                          sizeof(response->response));
+            }
+            else if (http_code == 429)
+            {
+              safe_strncpy(response->response, 
+                          "API rate limit exceeded. Please try again later.", 
+                          sizeof(response->response));
+            }
+            else if (http_code == 401)
+            {
+              safe_strncpy(response->response, 
+                          "Invalid API key. Please check your configuration.", 
+                          sizeof(response->response));
+            }
+            else
+            {
+              snprintf(response->response, sizeof(response->response), 
+                      "API Error: %s", error_msg);
+            }
+          }
+        }
+        json_object_put(error_root);
+      }
+    }
+    
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+    if (api_response.memory)
+    {
+      free(api_response.memory);
+    }
+
+    return (-1);
+  }
+
+  // HTTP 200 - Parse successful response
+  if (api_response.memory)
   {
     printf("[DEBUG] Gemini response received: %s\n", api_response.memory);
 
@@ -261,35 +336,61 @@ call_gemini_api(
                 if (json_object_object_get_ex(first_part, "text", &text))
                 {
                   const char *ai_text = json_object_get_string(text);
-
                   safe_strncpy(response->response, ai_text, sizeof(response->response));
-
                   response->success = 1;
                   printf("[INFO] Gemini response processed successfully\n");
                   printf("[INFO] Response: '%s'\n", response->response);
                 }
+                else
+                {
+                  printf("[ERROR] No 'text' field in response\n");
+                }
+              }
+              else
+              {
+                printf("[ERROR] No parts in response\n");
               }
             }
+            else
+            {
+              printf("[ERROR] No 'parts' field in response\n");
+            }
+          }
+          else
+          {
+            printf("[ERROR] No 'content' field in response\n");
           }
         }
+        else
+        {
+          printf("[ERROR] No candidates in response\n");
+        }
       }
-      json_object_put(resp_root); // Free JSON object
+      else
+      {
+        printf("[ERROR] No 'candidates' field in response\n");
+        // Could be an error response even with HTTP 200
+        json_object *error_obj;
+        if (json_object_object_get_ex(resp_root, "error", &error_obj))
+        {
+          printf("[ERROR] Response contains error field despite HTTP 200\n");
+        }
+      }
+      json_object_put(resp_root);
     }
     else
     {
       printf("[ERROR] Failed to parse Gemini response JSON\n");
     }
   }
-  else
-  {
-    printf("[ERROR] Gemini API request failed: %s\n", curl_easy_strerror(res));
-  }
 
   // Cleanup
   curl_slist_free_all(headers);
   curl_easy_cleanup(curl);
   if (api_response.memory)
+  {
     free(api_response.memory);
+  }
 
   return response->success ? (0) : (-1);
 }
