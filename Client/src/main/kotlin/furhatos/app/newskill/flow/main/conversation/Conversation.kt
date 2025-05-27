@@ -67,7 +67,7 @@ fun Conversation(furhatPersonality: PersonalityVector) =
             runBlocking {
                 // Invia messaggio
                 BackendService.socket.sendMessage(
-                    Parser.toRequest(
+                    Parser.toRequestPayload(
                         pv = PersonalityDisplacement(furhatPersonality),
                         lang = it.language,
                         history = retrieveHistory(),

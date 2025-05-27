@@ -1,6 +1,7 @@
 package furhatos.app.newskill.data.remote
 
 import furhatos.app.newskill.data.remote.dto.MessageHistory
+import furhatos.app.newskill.data.remote.protocol.ProtocolMessage
 import furhatos.app.newskill.model.PersonalityDisplacement
 import furhatos.app.newskill.setting.DEBUG_MODE
 import furhatos.util.Language
@@ -10,7 +11,7 @@ import kotlinx.serialization.json.Json
 // Replace '\n' with ' ' and add one at the end
 // Use java Locale instead of Furhat Language
 object Parser {
-    fun toRequest(
+    fun toRequestPayload(
         pv: PersonalityDisplacement,
         lang: Language,
         history: MessageHistory,
@@ -25,8 +26,11 @@ object Parser {
         if (DEBUG_MODE) {
             println(jsonString)
         }
-        return (request + jsonString).replace("\n"," ") + "\n"
+        return (request + jsonString).replace("\n", " ") + "\n"
     }
 
-    fun toMessage(response: String): List<String> = response.split("|")
+    fun toMessage(response: String): ProtocolMessage.Response =
+        response.split("|").let {
+            ProtocolMessage.Response(it[0].toUInt(), it[1])
+        }
 }

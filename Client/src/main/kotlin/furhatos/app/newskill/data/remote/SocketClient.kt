@@ -1,5 +1,6 @@
 package furhatos.app.newskill.data.remote
 
+import furhatos.app.newskill.data.remote.protocol.ProtocolMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,6 +38,7 @@ class SocketClient(
     private val host: String,
     private val port: Int,
 ) {
+    private var message: ProtocolMessage.RequestType = ProtocolMessage.AIRequest("")
     private var socket: Socket? = null
     private var writer: PrintWriter? = null
     private var reader: BufferedReader? = null
@@ -84,14 +86,15 @@ class SocketClient(
      * @throws IllegalStateException se l'utente non è autenticato
      */
 
-    suspend fun sendMessage(message: String): Boolean {
+    suspend fun sendMessage(payload: String): Boolean {
         if (!_isConnected) {
             return false
         }
 
         return withContext(Dispatchers.IO) {
             try {
-                writer?.println("MESSAGE_REQUEST|$message")
+                message.payload = payload
+                writer?.println(message)
                 true
             } catch (e: Exception) {
                 false
@@ -136,23 +139,26 @@ class SocketClient(
     }
 
 // TODO: update using number from config.h
+
     /**
      * Gestisce i messaggi ricevuti dal server e invoca le callback appropriate
      *
      * @param message messaggio grezzo ricevuto dal server
      */
     private fun handleServerMessage(message: String) {
-        val parts = Parser.toMessage(message)
+        val response = Parser.toMessage(message)
 
-        when (parts[0]) {
-            "MESSAGE_RESPONSE" -> {
-                onMessageReceived(parts[1])
+        when (response) {
+            is ProtocolMessage.AIResponse -> {
+                onMessageReceived(response.payload)
             }
-            "MESSAGE_INFO" -> {
-                onServerInfo(parts[1])
+            is ProtocolMessage.TestResponse -> {
+                onServerInfo("Test Response received!")
+                this@SocketClient.message = ProtocolMessage.TestRequest("")
+                onMessageReceived(response.payload)
             }
-            "MESSAGE_ERROR" -> {
-                onServerError(parts[1])
+            is ProtocolMessage.Error -> {
+                onServerError(response.payload)
                 onDisconnected()
                 _isConnected = false
                 disconnect()
