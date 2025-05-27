@@ -5,6 +5,7 @@
 
 #include "network.h"
 #include "thread_pool.h"
+#include "util.h"
 
 /**
  * @brief Signal handler for graceful shutdown
@@ -14,10 +15,10 @@
 static void
 signal_handler(int signum)
 {
-#if SHOW_INFO
+
   printf("\n[INFO] Received signal %d (%s), shutting down gracefully...\n",
          signum, (signum == SIGINT) ? "SIGINT" : "SIGTERM");
-#endif
+
   g_server.running = 0;
 }
 
