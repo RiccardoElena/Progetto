@@ -56,7 +56,7 @@ Non è necessaria alcuna compilazione. Tutta la compilazione avviene internament
 
 ##### Lanciare su SDK
 
-***Una volta lanciato il [Furhat SDK](https://docs.furhat.io/getting_started/)*** sarà sufficiente utilizzare i seguenti comandi dalla `root` del progetto:
+***Una volta lanciato il [Furhat SDK](https://docs.furhat.io/getting_started/)*** sarà sufficiente utilizzare i seguenti comandi dalla cartella `Client` del progetto:
 
 ```bash
 java -jar Client-all.skill || java -cp java -cp Client-all.skill furhatos.skills.Skill
