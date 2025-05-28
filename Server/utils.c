@@ -97,6 +97,9 @@ test_response() {
 
     static int i = 0; 
 
+    struct timespec delay = {0, 2000000000}; // 2 sec
+    nanosleep(&delay, NULL);
+
     return (test_string[i++ % 10]);
 }
 

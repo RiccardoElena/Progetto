@@ -7,11 +7,23 @@
 #include "utils.h"
 
 /**
+ * @brief Handler function to delete thread
+ */
+static void
+thread_cleanup(void * mutex)
+{
+    pthread_mutex_unlock(mutex);
+}
+
+/**
  * @brief Enhanced worker thread function with performance tracking
  */
 static void *thread_pool_worker(void *arg)
 {
   thread_pool_t *pool = (thread_pool_t *)arg;
+
+  pthread_cleanup_push(thread_cleanup, &pool->queue_mutex);  
+
 #if SHOW_DEBUG
   printf("[DEBUG] Worker thread %lu started\n", pthread_self());
 #endif
@@ -22,10 +34,28 @@ static void *thread_pool_worker(void *arg)
     // Lock the queue to check for work
     pthread_mutex_lock(&pool->queue_mutex);
 
+    // Make thread cancellable
+    if (pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL))
+    {
+#if SHOW_DEBUG
+      printf("[ERROR] Thread %d cannot cancel state\n", pthread_self());
+#endif
+        break;
+    }
+
     // Wait for work or shutdown signal
     while (pool->queue_head == NULL && !pool->shutdown)
     {
       pthread_cond_wait(&pool->queue_cond, &pool->queue_mutex);
+    }
+
+    // Make thread cancellable
+    if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL))
+    {
+#if SHOW_DEBUG
+      printf("[ERROR] Thread %d cannot cancel state\n", pthread_self());
+#endif
+        break;
     }
 
     // Check if we should shutdown
@@ -66,6 +96,8 @@ static void *thread_pool_worker(void *arg)
     long task_time_ms = (task_end.tv_sec - task_start.tv_sec) * 1000 +
                         (task_end.tv_nsec - task_start.tv_nsec) / 1000000;
 
+    pthread_mutex_lock(&pool->queue_mutex);
+
     // Update performance metrics
     atomic_fetch_add(&pool->total_tasks_completed, 1);
     atomic_fetch_add(&pool->total_task_time_ms, task_time_ms);
@@ -84,8 +116,13 @@ static void *thread_pool_worker(void *arg)
     }
 
     atomic_fetch_sub(&pool->active_threads, 1);
+
+    pthread_mutex_unlock(&pool->queue_mutex);
+
     free(task);
   }
+
+  pthread_cleanup_pop(0);  
 
   return NULL;
 }
@@ -237,10 +274,10 @@ void thread_pool_auto_scale(thread_pool_t *pool)
   // Calculate load ratio
   float load_ratio = (float)active_threads / current_threads;
 
-#if SHOW_DEBUG
+//#if SHOW_DEBUG
   printf("[DEBUG] Auto-scale check: threads=%d, active=%d, queue=%d, load=%.1f%%\n",
          current_threads, active_threads, queue_size, load_ratio * 100);
-#endif
+//#endif
 
   // SCALE UP logic
   if (load_ratio > THREAD_POOL_SCALE_UP_THRESHOLD &&
@@ -248,25 +285,26 @@ void thread_pool_auto_scale(thread_pool_t *pool)
       current_threads < pool->max_threads)
   {
 
-    int new_thread_count = (current_threads * 3) / 2; // Scale up by 50%
+    int new_thread_count = ((current_threads * 3) + 1)/ 2; // Scale up by 50%
     if (new_thread_count > pool->max_threads)
     {
       new_thread_count = pool->max_threads;
     }
 
-#if SHOW_INFO
+//#if SHOW_INFO
     printf("[INFO] SCALING UP: %d -> %d threads (load=%.1f%%, queue=%d)\n",
            current_threads, new_thread_count, load_ratio * 100, queue_size);
-#endif
+//#endif
     // Create additional threads
     for (int i = current_threads; i < new_thread_count; i++)
     {
       if (pthread_create(&pool->threads[i], NULL, thread_pool_worker, pool) == 0)
       {
         pool->thread_count++;
-#if SHOW_DEBUG
+//#if SHOW_DEBUG
         printf("[DEBUG] Created additional worker thread %d\n", i);
-#endif
+        printf("[DEBUG] thread count = %d\n", pool->thread_count);
+//#endif
       }
       else
       {
@@ -284,20 +322,68 @@ void thread_pool_auto_scale(thread_pool_t *pool)
            current_threads > pool->min_threads)
   {
 
-    int new_thread_count = (current_threads * 3) / 4; // Scale down by 25%
+    int new_thread_count = ((current_threads * 3) + 1) / 4; // Scale down by 25%
     if (new_thread_count < pool->min_threads)
     {
       new_thread_count = pool->min_threads;
     }
 
-#if SHOW_INFO
+//#if SHOW_INFO
     printf("[INFO] SCALING DOWN: %d -> %d threads (load=%.1f%%, queue=%d)\n",
            current_threads, new_thread_count, load_ratio * 100, queue_size);
-#endif
-    // Note: Actually removing threads is complex and risky
-    // For simplicity, we just reduce the logical count
-    // Excess threads will exit naturally when no work is available
+//#endif
+    for (int i = (pool->thread_count - 1); i >= new_thread_count; --i)
+    {
+        if (pthread_cancel(pool->threads[i]))
+        {
+//#if SHOW_ERROR
+            printf("[ERROR] Failed to cancel thread %d\n", i);
+//#endif
+            break;
+        }
+//#if SHOW_INFO
+        printf("[INFO] Thread %d correctly canceled\n", i);
+//#endif
+    }
+
+//    int old_thread_count = pool->thread_count;
+
     pool->thread_count = new_thread_count;
+
+/*
+    pool->last_scale_time = now;
+    pthread_mutex_unlock(&pool->queue_mutex);
+
+    for (int i = old_thread_count - 1; i >= new_thread_count; --i)
+    {
+        void * res;
+
+        if (pthread_join(pool->threads[i], &res))
+        {
+//#if SHOW_ERROR
+            printf("[ERROR] Failed to check thread %d cancellation [JOIN]\n", i);
+//#endif
+            break;
+        }
+        
+        if (res == PTHREAD_CANCELED)
+        {
+//#if SHOW_INFO
+            printf("[INFO] Thread %d correctly canceled\n", i);
+//#endif
+            
+        }
+        else
+        {
+//#if SHOW_ERROR
+            printf("[ERROR] Failed to cancel thread %d\n", i);
+//#endif
+            break;
+        }
+    }
+
+    return;
+*/
   }
 
   pool->last_scale_time = now;

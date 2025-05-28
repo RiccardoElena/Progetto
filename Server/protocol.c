@@ -141,9 +141,6 @@ int receive_message(int client_fd, message_t *msg)
 
   // Step 1: Receive complete line from socket
   int line_length = receive_line(client_fd, line_buffer, sizeof(line_buffer));
-  printf("line length %d", line_length);
-  printf("line %s", line_buffer);
-  printf("\n\n\n\n");
   if (line_length < 0)
   {
     return (-1);

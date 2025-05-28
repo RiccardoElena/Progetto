@@ -7,7 +7,10 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY *.c *.h Makefile ./
+
+COPY *.c ./
+COPY *.h ./
+COPY Makefile ./
 
 RUN make release
 

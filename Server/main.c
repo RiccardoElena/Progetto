@@ -5,7 +5,7 @@
 
 #include "network.h"
 #include "thread_pool.h"
-#include "util.h"
+#include "utils.h"
 
 /**
  * @brief Signal handler for graceful shutdown

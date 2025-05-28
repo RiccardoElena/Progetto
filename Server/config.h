@@ -24,10 +24,10 @@
 #define THREAD_POOL_MIN_SIZE 4               // Minimum threads
 #define THREAD_POOL_MAX_SIZE 32              // Maximum threads
 #define THREAD_POOL_INITIAL_SIZE 8           // Starting threads
-#define THREAD_POOL_SCALE_INTERVAL 5         // Seconds between scaling checks
-#define THREAD_POOL_SCALE_UP_THRESHOLD 0.8   // Load ratio to scale up
+#define THREAD_POOL_SCALE_INTERVAL 2         // Seconds between scaling checks
+#define THREAD_POOL_SCALE_UP_THRESHOLD 0.6   // Load ratio to scale up
 #define THREAD_POOL_SCALE_DOWN_THRESHOLD 0.3 // Load ratio to scale down
-#define THREAD_POOL_QUEUE_HIGH_WATER 20      // Queue size to trigger scale up
+#define THREAD_POOL_QUEUE_HIGH_WATER 10      // Queue size to trigger scale up
 #define THREAD_POOL_QUEUE_LOW_WATER 2        // Queue size to trigger scale down
 
 // ========== MESSAGE PROTOCOL ==========
