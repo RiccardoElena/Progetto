@@ -59,9 +59,10 @@ Non è necessaria alcuna compilazione. Tutta la compilazione avviene internament
 ***Una volta lanciato il [Furhat SDK](https://docs.furhat.io/getting_started/)*** sarà sufficiente utilizzare i seguenti comandi dalla `root` del progetto:
 
 ```bash
-cd Client/build/libs &&
-(java -jar Client-all.skill || java -cp java -cp Client-all.skill furhatos.skills.Skill)
+java -jar Client-all.skill || java -cp java -cp Client-all.skill furhatos.skills.Skill
 ```
+
+> ***Nota:*** Se nello step di compilazione è stato necessario creare il jar poichè il file non era precedentemente presente, sarà necessario recarsi nella cartella `Client/build/libs` prima di invocare il comando sopracitato
 
 ##### Lanciare su un Robot
 
