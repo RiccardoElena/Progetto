@@ -224,45 +224,12 @@ test_response_pt() {
 }
 
 /**
- * @brief Return a string to test dialog without ai. Language = GOD
- * @return Pointer to string
- */
-static char *
-test_response_easter() {
-    static char * test_string[17] = {
-        "Che differenza c'è tra un ebreo e una pizza? La pizza non urla quando la metti nel forno!",
-        "La differenza tra un incidente ed una catastrofe? un incidente è quando un barcone di immigrati si ribalta in mare, una catastrofe è che sanno nuotare",
-        "Mio padre é una delle vittime dell' 11 settembre, era proprio un bravo pilota",
-        "Nonno, che cazzo è questa puzza? Nonno? Nonno! Nonno nonno!!!",
-        "Chi vince una corsa in montagna tra un nero e un bianco? Il nero perché ha le catene",
-        "Sapete cosa fa una bambina irachena sull'altalena?.... Fa incazzare il cecchino.",
-        "Che differenza c'è tra un nero ed un secchio di merda? Il secchio.",
-        "Cosa fa un pagliaccio che si lancia da un aereo con un paracadute difettoso? Pietro Taricone.",
-        "Come fai a sapere che tua sorella ha il ciclo? Perché il cazzo di tuo padre oggi ha un sapore strano.",
-        "sto aspettando anna frank da un pò probabilmente é molto sporca perche' non é ancora uscita dalla doccia",
-        "Come fanno a entrare 200 ebrei e quattro SS in una 500? Due SS davanti, due dietro e i 200 ebrei dentro il portacenere",
-        "Perché Hitler si è suicidato? Gli è arrivata la bolletta del gas!",
-        "Qual è la differenza tra un ebreo e una pizza? Il tempo di cottura!",
-        "Qual è la differenza tra un ebreo e babbo Natale? Babbo Natale scende dal camino, l'ebreo ci sale.",
-        "Cosa fa un ebreo intento a fissare un posacenere? Guarda l'album delle foto di famiglia!",
-        "Oggi faremo una maratona. Il primo e l'ultimo arrivato verranno fucilati.... Bene, avanti i primi due!",
-        "Non ho mai violentato un bambino; non sono così religioso."
-    };
-    static int i = 0; 
-    return (test_string[i++ % 17]);
-}
-
-/**
  * @brief Return a string to test dialog without ai. Language = italian
  * @return Pointer to string
  */
 char *
 test_response(char * language)
 {
-#if EASTER_EGG_MODE
-    return (test_response_easter());        
-#endif 
-    
     char lang_copy[MAX_LANGUAGE_SIZE];
     
     strcpy(lang_copy, language);
@@ -275,7 +242,6 @@ test_response(char * language)
     if (strcmp(lang_copy, "portougese") == 0) return (test_response_pt());
     
     return (test_response_it());
-    
 }
 
 
