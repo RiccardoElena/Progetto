@@ -38,7 +38,7 @@ static void *thread_pool_worker(void *arg)
     if (pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL))
     {
 #if SHOW_ERROR
-      printf("[ERROR] Thread %d cannot cancel state\n", pthread_self());
+      printf("[ERROR] Thread %lu cannot cancel state\n", pthread_self());
 #endif
       break;
     }
@@ -53,7 +53,7 @@ static void *thread_pool_worker(void *arg)
     if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL))
     {
 #if SHOW_ERROR
-      printf("[ERROR] Thread %d cannot cancel state\n", pthread_self());
+      printf("[ERROR] Thread %lu cannot cancel state\n", pthread_self());
 #endif
       break;
     }

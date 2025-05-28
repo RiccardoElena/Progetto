@@ -27,10 +27,10 @@ object Parser {
 
     private fun toText(lang: Language): String =
         when (lang.code.lowercase()) {
-            "fr-fr" -> "Français"
-            "es-es" -> "Español"
-            "en-gb" -> "English"
-            else -> "Italiano"
+            "fr-fr" -> "french"
+            "es-es" -> "spanish"
+            "en-gb" -> "english"
+            else -> "italian"
         }
 
     fun toMessage(response: String): ProtocolMessage.Response =

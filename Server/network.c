@@ -44,15 +44,6 @@ process_single_request_and_close(int client_fd)
 #endif
   }
 
-  /*
-    // Send welcome message
-    if (send_message(client_fd, MSG_RESPONSE, "Connected - Send your request") < 0)
-    {
-      printf("[WARNING] Failed to send welcome message to fd %d\n", client_fd);
-      close(client_fd);
-      return;
-    } // TODO: we do not need anymore
-  */
   // Receive exactly one message
   message_t msg;
   if (receive_message(client_fd, &msg) < 0)
@@ -142,7 +133,19 @@ process_single_request_and_close(int client_fd)
 
   case MSG_TEST_DIALOG_REQUEST:
   {
-    if (send_message(client_fd, MSG_TEST_DIALOG_RESPONSE, test_response()) == 0)
+    // Parse the complete stateless request
+    client_message_t request;
+    if (parse_client_dialog_message(msg.data, &request) != 0)
+    {
+#if SHOW_ERROR
+      printf("[ERROR] Failed to parse client message from fd %d\n", client_fd);
+#endif
+      send_message(client_fd, MSG_ERROR, "Invalid request format");
+      close(client_fd);
+      return;
+    }
+
+    if (send_message(client_fd, MSG_TEST_DIALOG_RESPONSE, test_response(request.language)) == 0)
     {
 #if SHOW_INFO
       printf("[INFO] Successfully processed test request for fd %d\n", client_fd);

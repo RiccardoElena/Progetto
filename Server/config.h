@@ -40,7 +40,7 @@
 // ========== MESSAGE PROTOCOL CONFIGURATION ==========
 #define MAX_MESSAGE_SIZE 3000 // Maximum message content size
 #define MAX_PERSONALITY_SIZE 512
-#define MAX_LANGUAGE_SIZE 8
+#define MAX_LANGUAGE_SIZE 16
 #define MAX_CONVERSATION_SIZE 2048
 
 // ========== COMPILATION FLAGS ==========
