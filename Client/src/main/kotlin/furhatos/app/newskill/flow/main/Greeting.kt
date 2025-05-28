@@ -16,7 +16,6 @@ val Greeting: State =
         onEntry {
             if (betterYN("intro_furhat")) {
 
-                goto(Conversation(PersonalityVector.median))
                 furhat.say(Localization.getLocalizedString("start_understanding"))
                 goto(TestStart)
             } else {
