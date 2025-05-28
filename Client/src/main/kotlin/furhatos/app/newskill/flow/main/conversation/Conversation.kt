@@ -57,7 +57,6 @@ fun Conversation(furhatPersonality: PersonalityVector) =
         onResponse {
             scope.launch {
                 if (BackendService.socket.connect()) {
-                    println(BackendService.socket.isConnected)
                     BackendService.socket.startListening()
 
                     if (DEBUG_MODE) {

@@ -4,12 +4,10 @@ import furhatos.app.newskill.model.PersonalityVector
 import kotlin.random.Random
 
 class RetrievePersonalityVectorUseCase {
-    operator fun invoke(
-        personalityVector: PersonalityVector,
-        equal: Boolean,
-    ) = if (Random.nextBoolean()) {
-        personalityVector
-    } else {
-        personalityVector.symmetricVector()
-    }
+    operator fun invoke(personalityVector: PersonalityVector) =
+        if (Random.nextBoolean()) {
+            personalityVector
+        } else {
+            personalityVector.symmetricVector()
+        }
 }

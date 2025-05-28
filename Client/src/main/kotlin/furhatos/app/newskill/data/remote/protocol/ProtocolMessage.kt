@@ -26,13 +26,13 @@ sealed class ProtocolMessage(
     }
 
     data class AIRequest(
-        override var payload: String,
+        override var payload: String = "",
     ) : RequestType(0x01u) {
         override fun toString(): String = "$code|$payload"
     }
 
     data class TestRequest(
-        override var payload: String,
+        override var payload: String = "",
     ) : RequestType(0x02u) {
         override fun toString(): String = "$code|$payload"
     }
@@ -56,19 +56,19 @@ sealed class ProtocolMessage(
     }
 
     data class AIResponse(
-        override var payload: String,
+        override var payload: String = "",
     ) : Response(0x03u) {
         override fun toString(): String = "$code|$payload"
     }
 
     data class TestResponse(
-        override var payload: String,
+        override var payload: String = "",
     ) : Response(0x04u) {
         override fun toString(): String = "$code|$payload"
     }
 
     data class Error(
-        override var payload: String,
+        override var payload: String = "",
     ) : Response(0x05u) {
         override fun toString(): String = "$code|$payload"
     }

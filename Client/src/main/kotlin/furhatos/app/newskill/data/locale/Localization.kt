@@ -30,10 +30,10 @@ object Localization {
 
     private fun localeMapper(lang: Language): Locale =
         when (lang.code.lowercase()) {
-            "fr-fr" -> Locale("fr", "FR")
-            "es-es" -> Locale("es", "ES")
-            "en-gb" -> Locale("en", "EN")
-            else -> Locale("default", "Default")
+            "fr-fr" -> Locale.forLanguageTag("fr-FR")
+            "es-es" -> Locale.forLanguageTag("es-ES")
+            "en-gb" -> Locale.forLanguageTag("en-EN")
+            else -> Locale.forLanguageTag("default-Default")
         }
 
     var lastLanguage: Language = Language.ITALIAN_CH

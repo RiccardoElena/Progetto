@@ -40,7 +40,8 @@ class SocketClient(
     private val host: String,
     private val port: Int,
 ) {
-    private var message: ProtocolMessage.RequestType = if (TEST_MODE) ProtocolMessage.TestRequest("") else ProtocolMessage.AIRequest("")
+    private var message: ProtocolMessage.RequestType = if (TEST_MODE) ProtocolMessage.TestRequest() else ProtocolMessage.AIRequest()
+
     private var socket: Socket? = null
     private var writer: PrintWriter? = null
     private var reader: BufferedReader? = null
@@ -83,7 +84,7 @@ class SocketClient(
     /**
      * Invia un messaggio di chat al server
      *
-     * @param message contenuto del messaggio da inviare
+     * @param payload contenuto del messaggio da inviare
      * @return true se il messaggio è stato inviato con successo, false altrimenti
      * @throws IllegalStateException se l'utente non è autenticato
      */
@@ -126,12 +127,12 @@ class SocketClient(
                         println("reader: $reader")
                         println("socket closed : ${socket?.isClosed}, socket connected : ${socket?.isConnected}")
                     }
-                    val message = reader?.readLine()
+                    val response = reader?.readLine()
                     if (DEBUG_MODE) {
-                        println(message)
+                        println(response)
                     }
-                    if (message != null) {
-                        handleServerMessage(message)
+                    if (response != null) {
+                        handleServerMessage(response)
                     }
                     _isConnected = false
                     onDisconnected()

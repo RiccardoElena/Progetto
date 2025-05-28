@@ -1,0 +1,7 @@
+services:
+  furhat-skill:
+    build:
+      context: .
+    ports:
+      - "1932:1932"  # Sostituisci con la porta appropriata se necessario
+
