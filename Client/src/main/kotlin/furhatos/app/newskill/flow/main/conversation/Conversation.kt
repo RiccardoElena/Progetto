@@ -27,10 +27,17 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.random.Random
 
 @Suppress("ktlint:standard:function-naming")
-fun Conversation(furhatPersonality: PersonalityVector) =
+fun Conversation(clientPersonality: PersonalityVector) =
     state {
+        val furhatPersonality =
+            if (Random.nextBoolean()) {
+                clientPersonality
+            } else {
+                clientPersonality.symmetricVector()
+            }
         val gestures = GesturesHelper.gesturesListFromPersonalityVector(furhatPersonality)
 
         val waitingSentences = WaitingSentenceHelper.waitingSentence(furhatPersonality)

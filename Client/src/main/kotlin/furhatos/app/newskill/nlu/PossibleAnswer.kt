@@ -11,7 +11,6 @@ class PossibleAnswer : EnumEntity(stemming = true, speechRecPhrases = true) {
             .values
             .toList()
             .map {
-                println("Init: ${lang.code}")
                 Localization.statelessGetLocalizedString(it, lang)
             }
 }

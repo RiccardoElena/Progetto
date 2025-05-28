@@ -25,15 +25,13 @@ object Parser {
         return (request + jsonString).replace("\n", " ") + "\n"
     }
 
-    private fun toText(lang: Language): String {
-        println(lang.code.lowercase())
-        return when (lang.code.lowercase()) {
+    private fun toText(lang: Language): String =
+        when (lang.code.lowercase()) {
             "fr-fr" -> "french"
             "es-es" -> "spanish"
             "en-gb" -> "english"
             else -> "italian"
         }
-    }
 
     fun toMessage(response: String): ProtocolMessage.Response =
         response.split("|").let {
