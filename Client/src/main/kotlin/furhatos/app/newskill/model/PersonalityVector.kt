@@ -53,7 +53,7 @@ data class PersonalityVector(
          * More demographically refined standard deviations exists for the same study, but are not implemented yet.
          * Generally speaking the standard deviation used here differs from the more specific ones by an error of ±0.1
          * */
-        val stdDev get() = _median
+        val stdDev get() = _stdDev
 
         fun symmetricVector(vector: PersonalityVector): PersonalityVector =
             PersonalityVector(

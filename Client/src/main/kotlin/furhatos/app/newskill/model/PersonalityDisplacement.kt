@@ -72,6 +72,7 @@ class PersonalityDisplacement(
             val sign = if (value > median) 1 else -1
 
             val delta = abs(value - median)
+
             if (delta < stdDev) return PersonalityDisplacementValues.displacementFromCode(0)
             if (delta < 2 * stdDev) return PersonalityDisplacementValues.displacementFromCode(sign * 1)
             return PersonalityDisplacementValues.displacementFromCode(sign * 2)

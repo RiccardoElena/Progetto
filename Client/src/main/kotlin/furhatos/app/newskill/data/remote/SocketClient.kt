@@ -1,6 +1,8 @@
 package furhatos.app.newskill.data.remote
 
 import furhatos.app.newskill.data.remote.protocol.ProtocolMessage
+import furhatos.app.newskill.setting.DEBUG_MODE
+import furhatos.app.newskill.setting.TEST_MODE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +40,7 @@ class SocketClient(
     private val host: String,
     private val port: Int,
 ) {
-    private var message: ProtocolMessage.RequestType = ProtocolMessage.AIRequest("")
+    private var message: ProtocolMessage.RequestType = if (TEST_MODE) ProtocolMessage.TestRequest("") else ProtocolMessage.AIRequest("")
     private var socket: Socket? = null
     private var writer: PrintWriter? = null
     private var reader: BufferedReader? = null
@@ -94,7 +96,10 @@ class SocketClient(
         return withContext(Dispatchers.IO) {
             try {
                 message.payload = payload
-                writer?.println(message)
+                if (DEBUG_MODE) {
+                    println(message.toString())
+                }
+                writer?.println(message.toString())
                 true
             } catch (e: Exception) {
                 false
@@ -116,17 +121,21 @@ class SocketClient(
     fun startListening() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                while (_isConnected) {
+                if (_isConnected) {
+                    if (DEBUG_MODE) {
+                        println("reader: $reader")
+                        println("socket closed : ${socket?.isClosed}, socket connected : ${socket?.isConnected}")
+                    }
                     val message = reader?.readLine()
-
+                    if (DEBUG_MODE) {
+                        println(message)
+                    }
                     if (message != null) {
                         handleServerMessage(message)
-                    } else {
-                        _isConnected = false
-                        onDisconnected()
-                        disconnect()
-                        break
                     }
+                    _isConnected = false
+                    onDisconnected()
+                    disconnect()
                 }
             } catch (e: Exception) {
                 _isConnected = false
@@ -143,10 +152,10 @@ class SocketClient(
     /**
      * Gestisce i messaggi ricevuti dal server e invoca le callback appropriate
      *
-     * @param message messaggio grezzo ricevuto dal server
+     * @param payload messaggio grezzo ricevuto dal server
      */
-    private fun handleServerMessage(message: String) {
-        val response = Parser.toMessage(message)
+    private fun handleServerMessage(payload: String) {
+        val response = Parser.toMessage(payload)
 
         when (response) {
             is ProtocolMessage.AIResponse -> {
@@ -154,7 +163,9 @@ class SocketClient(
             }
             is ProtocolMessage.TestResponse -> {
                 onServerInfo("Test Response received!")
-                this@SocketClient.message = ProtocolMessage.TestRequest("")
+                if (message !is ProtocolMessage.TestRequest) {
+                    message = ProtocolMessage.TestRequest("")
+                }
                 onMessageReceived(response.payload)
             }
             is ProtocolMessage.Error -> {

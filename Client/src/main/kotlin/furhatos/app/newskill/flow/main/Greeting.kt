@@ -17,6 +17,7 @@ val Greeting: State =
 //                    furhat.say("Cavolo che sbadato, non ricordo proprio. Ricordami chi sei")
 //                    goto(Login)
 //                }
+
                 furhat.say(Localization.getLocalizedString("start_understanding"))
                 goto(TestStart)
             } else {

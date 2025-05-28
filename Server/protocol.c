@@ -17,6 +17,7 @@
  */
 int send_message(int client_fd, int msg_type, const char *data)
 {
+
   char message_buffer[MAX_MESSAGE_SIZE + 32]; // Extra space for type and separator
 
   // Format message as "MESSAGE_TYPE|payload\n"

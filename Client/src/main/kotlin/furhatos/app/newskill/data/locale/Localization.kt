@@ -1,7 +1,6 @@
 package furhatos.app.newskill.data.locale
 
 // import furhatos.locale.Locale as FurhatLocale
-import furhatos.app.newskill.setting.DEBUG_MODE
 import furhatos.util.Language
 import java.util.Locale
 import java.util.ResourceBundle
@@ -12,12 +11,11 @@ object Localization {
         lang: Language,
     ): String {
         lastLanguage = lang
-        if (DEBUG_MODE) println("Answering in ${lastLanguage.code}")
+
         return getLocalizedString(key)
     }
 
     fun getLocalizedString(key: String): String {
-        if (DEBUG_MODE) println("Answering in ${localeMapper(lastLanguage)}")
         val bundle = ResourceBundle.getBundle("string", localeMapper(lastLanguage))
         return bundle.getString(key)
     }
@@ -26,7 +24,6 @@ object Localization {
         key: String,
         lang: Language,
     ): String {
-        if (DEBUG_MODE) println("Stateless Answering in ${localeMapper(lang)}")
         val bundle = ResourceBundle.getBundle("string", localeMapper(lang))
         return bundle.getString(key)
     }

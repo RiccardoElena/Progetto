@@ -18,6 +18,7 @@ fun FlowControlRunner.changeOutputLanguage(language: Language) {
     Localization.lastLanguage = language
 }
 
+@Suppress("ktlint:standard:function-naming")
 private fun YN(question: String) =
     state {
         onEntry {
@@ -25,7 +26,7 @@ private fun YN(question: String) =
         }
 
         onResponse<Yes> {
-            changeOutputLanguage(it.language)
+            changeOutputLanguage(if (it.language == Language.SPANISH_ES) Language.ITALIAN else it.language)
             terminate(true)
         }
 

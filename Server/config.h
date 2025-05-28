@@ -44,10 +44,10 @@
 #define MAX_CONVERSATION_SIZE 2048
 
 // ========== COMPILATION FLAGS ==========
-#define SHOW_DEBUG 0
-#define SHOW_ERROR 0
-#define SHOW_INFO 0
-#define SHOW_WARNING 0
+#define SHOW_DEBUG 1
+#define SHOW_ERROR 1
+#define SHOW_INFO 1
+#define SHOW_WARNING 1
 #define EASTER_EGG_MODE 0
 
 #endif /* CONFIG_H */
